@@ -8,7 +8,13 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI;
 
+app.use(express.json());
 
+app.use("api/auth", () => {});
+app.use("api/course", () => {});
+app.use("api/student", () => {});
+app.use("api/enrole", () => {});
+app.use("api/upload", () => {});
 
 mongoose
   .connect(MONGO_URI!)
