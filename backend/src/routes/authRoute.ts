@@ -4,19 +4,16 @@ import authController from "../controllers/authController";
 
 const router = express.Router();
 
-router.post("/sign-in", authController.login);
+router.post("/login", authController.login);
 
 router.post(
-  "/sign-up",
+  "/register",
   [
     check("firstName").isString().not().isEmpty(),
     check("email").isEmail().not().isEmpty(),
     check("password").isString().isLength({ min: 6 }),
   ],
-
- 
+  authController.register
 );
 
-module.exports = router
-
-
+export default router;
