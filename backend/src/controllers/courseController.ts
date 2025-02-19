@@ -41,7 +41,21 @@ const getCoursesByAdminId = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const { adminId } = req.params;
+
+  try {
+    const courses = await Course.find({ adminId });
+
+    if (!courses || courses.length === 0) {
+      return next(new HttpError("No courses found", 404));
+    }
+
+    res.status(200).json({ courses });
+  } catch (error) {
+    return next(new HttpError("Fetching courses failed", 500));
+  }
+};
 const getCourseById = async (
   req: Request,
   res: Response,
