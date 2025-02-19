@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const CourseSchema = Schema(
+const CourseSchema = new Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -13,5 +13,6 @@ const CourseSchema = Schema(
 );
 
 const Course = mongoose.model("Course", CourseSchema);
+
 
 export default Course;
