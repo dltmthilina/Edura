@@ -51,7 +51,16 @@ const deleteCourse = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const { id } = req.params;
+
+  try {
+    await Course.findOneAndDelete({ _id: id });
+    res.status(200).json({ message: "Course deleted successfully" });
+  } catch (error) {
+    return next(new HttpError("Could not delete course", 500));
+  }
+};
 
 export default {
   createCourse,
