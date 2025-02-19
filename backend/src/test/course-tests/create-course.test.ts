@@ -68,17 +68,16 @@ describe("Course create controller test", () => {
 
   it("should return 500 for database errors", async () => {
     (validationResult as unknown as jest.Mock).mockReturnValue({
-      isEmpty: jest.fn().mockReturnValue(false),
-      array: jest.fn().mockReturnValue([{ msg: "Invalid input" }]),
+      isEmpty: jest.fn().mockReturnValue(true),
+      array: jest.fn().mockReturnValue([]),
     });
 
-    const mockCreate = jest.fn().mockResolvedValue(new Error("Database error"));
+    const mockCreate = jest.fn().mockRejectedValue(new Error("Database error"));
     Course.create = mockCreate;
     await createCourse(req, res, next);
     expect(next).toHaveBeenCalled();
     const actualError = next.mock.calls[0][0];
     expect(actualError).toBeInstanceOf(HttpError);
     expect(actualError.code).toBe(500);
-    expect(actualError.message).toBe("Invalid details");
   });
 });
