@@ -10,7 +10,7 @@ const UserSchema = new Schema(
     lastName: { type: String },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["student", "admin"], default: "student" },
+    role: { type: String, enum: ["student", "admin"], require: true },
   },
   { timestamps: true }
 );
