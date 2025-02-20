@@ -16,6 +16,6 @@ router.post(
 router.put("/update", courseController.updateCourse);
 router.get("/get:adminId", courseController.getCoursesByAdminId);
 router.get("/get:id", courseController.getCourseById);
-router.delete("/delete", courseController.deleteCourse);
+router.delete("/delete:id", courseController.deleteCourse);
 
 export default router;

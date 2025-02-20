@@ -32,11 +32,42 @@ const createCourse = async (
     return next(new HttpError(toString(err), 500));
   }
 };
+
+//////////////////////////////////////////////////////////////
 const updateCourse = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError("Invalid details", 400));
+  }
+
+  const { id } = req.params;
+  const { title, description, duration, materials } = req.body;
+
+  try {
+    const updatedCourse = await Course.findByIdAndUpdate(
+      id,
+      { title, description, duration, materials },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedCourse) {
+      return next(new HttpError("Course not found", 404));
+    }
+
+    res.status(200).json({
+      courseId: updatedCourse._id,
+      message: "Course updated successfully",
+    });
+  } catch (error) {
+    next(new HttpError("Updating course failed", 500));
+  }
+};
+
+/////////////////////////////////////////////////////////////////////////
 const getCoursesByAdminId = async (
   req: Request,
   res: Response,
@@ -56,11 +87,29 @@ const getCoursesByAdminId = async (
     return next(new HttpError("Fetching courses failed", 500));
   }
 };
+
+///////////////////////////////////////////////////////////////////////////////
 const getCourseById = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const { id } = req.params;
+
+  try {
+    const course = await Course.findById(id);
+
+    if (!course) {
+      return next(new HttpError("Course not found", 404));
+    }
+
+    res.status(200).json({ course });
+  } catch (error) {
+    next(new HttpError("Could not retrieve course", 500));
+  }
+};
+
+////////////////////////////////////////////////////////////////////
 const deleteCourse = async (
   req: Request,
   res: Response,
