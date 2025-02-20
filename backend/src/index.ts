@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 import authRoutes from "./routes/authRoute";
 import courseRoutes from "./routes/courseRoute";
+import studentRoutes from "./routes/studentRoute";
 
 dotenv.config({ path: ".env.local" });
 
@@ -19,7 +20,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("api/course", courseRoutes);
-app.use("api/student", () => {});
+app.use("api/student", studentRoutes);
 app.use("api/enrole", () => {});
 app.use("api/upload", () => {});
 
