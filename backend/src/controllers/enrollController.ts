@@ -1,0 +1,82 @@
+import express, { Request, Response, NextFunction } from "express";
+import { Enrollment } from "../models/enrollment";
+import HttpError from "../models/httpError";
+
+const enrollStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { studentId, courseId } = req.body;
+
+  try {
+    const existingEnrollment = await Enrollment.findOne({
+      studentId,
+      courseId,
+    });
+    if (existingEnrollment) {
+      return next(
+        new HttpError("Student is already enrolled in this course", 400)
+      );
+    }
+
+    const enrollment = await Enrollment.create({ studentId, courseId });
+    res.status(201).json(enrollment);
+  } catch (error) {
+    return next(new HttpError("Database error", 500));
+  }
+};
+
+const unEnrollStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { enrollmentId } = req.params;
+
+    const enrollment = await Enrollment.findByIdAndDelete(enrollmentId);
+
+    if (!enrollment) {
+      return next(new HttpError("Enrollment not found", 404));
+    }
+
+    res.status(200).json({ message: "Enrollment removed" });
+  } catch (error) {
+    return next(new HttpError("Database error", 500));
+  }
+};
+
+const updateEnrollmentStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { enrollmentId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const enrollment = await Enrollment.findById(enrollmentId);
+
+    if (!enrollment) {
+      return next(new HttpError("Enrollment not found", 404));
+    }
+
+    if (!["Active", "Completed"].includes(status)) {
+      return next(new HttpError("Invalid status value", 400));
+    }
+
+    enrollment.status = status;
+    await enrollment.save();
+
+    res.status(200).json({ message: "Enrollment status updated", enrollment });
+  } catch (error) {
+    return next(new HttpError("Database error", 500));
+  }
+};
+
+export default {
+  enrollStudent,
+  unEnrollStudent,
+  updateEnrollmentStatus,
+};
