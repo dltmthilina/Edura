@@ -14,7 +14,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    next(new HttpError("Invalid user data", 400));
+    return next(new HttpError("Invalid user data", 400));
   }
 
   try {
@@ -38,7 +38,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       .status(201)
       .json({ token: token, message: "User registered successfully!" });
   } catch (error) {
-    next(new HttpError(toString(error), 500));
+    return next(new HttpError(toString(error), 500));
   }
 };
 
