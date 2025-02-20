@@ -4,6 +4,8 @@ import { validationResult } from "express-validator";
 import HttpError from "../models/httpError";
 import { toString } from "express-validator/lib/utils";
 import User from "../models/user";
+import { Student } from "../models/student";
+import { Tutor } from "../models/tutor";
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -18,7 +20,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, studentId, password, role } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       firstName,
@@ -27,6 +29,17 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       password: hashedPassword,
       role,
     });
+
+    if (role == "student") {
+      await Student.create({
+        userId: user._id,
+        studentId,
+      });
+    } else if (role == "tutor") {
+      await Tutor.create({
+        userId: user._id,
+      });
+    }
 
     const token = jwt.sign(
       { userId: user._id, role: user.role },
