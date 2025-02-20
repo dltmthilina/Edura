@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/authRoute";
 import courseRoutes from "./routes/courseRoute";
 import studentRoutes from "./routes/studentRoute";
+import enrollRoute from "./routes/enrollRoute";
 
 dotenv.config({ path: ".env.local" });
 
@@ -19,10 +20,10 @@ interface CustomError extends Error {
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("api/course", courseRoutes);
-app.use("api/student", studentRoutes);
-app.use("api/enrole", () => {});
-app.use("api/upload", () => {});
+app.use("/api/course", courseRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api", enrollRoute);
+app.use("/api/upload", () => {});
 
 app.use(
   (error: CustomError, req: Request, res: Response, next: NextFunction) => {
