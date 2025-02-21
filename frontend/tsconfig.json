@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "noImplicitAny": false, //Allows implicit any types without throwing errors.
+        "module": "CommonJS", //Uses native ES module syntax (import/export).
+        "target": "esnext", //Determines the ECMAScript version TypeScript compiles to.
+        "lib": [
+            //Supports browser and modern JavaScript features.
+            "esnext", //Includes latest ECMAScript features.
+            "dom", //Enables browser-specific APIs like document, window.
+            "dom.iterable" //Enables iteration over DOM collections like NodeList.
+        ],
+        "removeComments": true, //Removes comments from compiled JavaScript
+        "allowSyntheticDefaultImports": true, //Allows importing modules without a default export.
+        "jsx": "react-jsx", //Uses the new JSX transform introduced in React 17+.
+        "allowJs": true, //Enables using JS files alongside TS files. not required
+        "baseUrl": "./", //Sets the base path for module resolution.
+        "esModuleInterop": true, //Enables compatibility between CommonJS and ES modules.
+        "resolveJsonModule": true, //Allows importing JSON files.not required
+        "moduleResolution": "node", //TypeScript tells the compiler how to resolve module imports when using import statements.
+        "downlevelIteration": true,
+        "paths": {
+            "components/*": [
+                "src/components/*", //Includes all TypeScript files in src folder.
+                "./webpack.config.ts" //Includes Webpack config in TypeScript
+            ]
+        }
+        //"outDir": "./dist", no need for react app since react uses webpack to bundle
+        //"rootDir": "./src"
+    },
+    "include": ["src/**/*"], // Include all TypeScript files in the 'src' folder
+    "exclude": ["node_modules"]
+}
