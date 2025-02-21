@@ -10,6 +10,7 @@ interface DecodedToken extends JwtPayload {
 
 const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(" ")[1]; // Expect "Bearer <token>"
+  console.log(req.headers.authorization?.split(" ")[1]);
 
   if (!token) {
     return next(

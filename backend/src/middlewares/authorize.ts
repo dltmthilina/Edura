@@ -7,6 +7,8 @@ const authorize = (roles: string[]) => {
     // Extract user role from request (assuming `req.user` contains authenticated user details)
     const userRole = req.user?.role;
 
+    console.log(userRole);
+
     if (!userRole || !roles.includes(userRole)) {
       return next(
         new HttpError("Access denied. Insufficient permissions.", 403)

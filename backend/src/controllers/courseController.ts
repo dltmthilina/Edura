@@ -3,9 +3,10 @@ import { validationResult } from "express-validator";
 import HttpError from "../models/httpError";
 import Course from "../models/course";
 import { toString } from "express-validator/lib/utils";
+import { AuthRequest } from "../utils/common-interfaces";
 
 const createCourse = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -14,18 +15,19 @@ const createCourse = async (
     return next(new HttpError("Invalid details", 400));
   }
 
-  const { title, description, duration, materials } = req.body;
+  const { title, description, duration } = req.body;
+  const userId = req.user?.userId;
   try {
     // Create a new course
     const newCourse = await Course.create({
       title,
       description,
       duration,
-      materials,
+      tutorId: userId,
     });
 
     res.status(201).json({
-      courseId: newCourse._id,
+      courseId: newCourse,
       message: "Course created succesfully",
     });
   } catch (err) {
@@ -59,24 +61,24 @@ const updateCourse = async (
     }
 
     res.status(200).json({
-      courseId: updatedCourse._id,
+      courseId: updatedCourse,
       message: "Course updated successfully",
     });
   } catch (error) {
-    next(new HttpError("Updating course failed", 500));
+    return next(new HttpError(toString(error), 500));
   }
 };
 
 /////////////////////////////////////////////////////////////////////////
 const getCoursesByAdminId = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { adminId } = req.params;
+  const tutorId = req.user?.userId;
 
   try {
-    const courses = await Course.find({ adminId });
+    const courses = await Course.find({ tutorId });
 
     if (!courses || courses.length === 0) {
       return next(new HttpError("No courses found", 404));
@@ -118,10 +120,32 @@ const deleteCourse = async (
   const { id } = req.params;
 
   try {
-    await Course.findOneAndDelete({ _id: id });
+    const deletedCourse = await Course.findOneAndDelete({ _id: id });
+
+    if (!deletedCourse) {
+      return next(new HttpError("Course not found", 404));
+    }
     res.status(200).json({ message: "Course deleted successfully" });
   } catch (error) {
     return next(new HttpError("Could not delete course", 500));
+  }
+};
+
+const getAllCourses = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const courses = await Course.find();
+
+    if (!courses || courses.length === 0) {
+      return next(new HttpError("No courses found", 404));
+    }
+
+    res.status(200).json(courses);
+  } catch (error) {
+    return next(new HttpError("Database error", 500));
   }
 };
 
@@ -131,4 +155,5 @@ export default {
   getCoursesByAdminId,
   deleteCourse,
   getCourseById,
+  getAllCourses,
 };

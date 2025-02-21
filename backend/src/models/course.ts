@@ -13,7 +13,7 @@ const CourseSchema = new Schema<ICourse>(
     title: { type: String, required: true },
     description: { type: String, required: true },
     duration: { type: String, required: true }, // e.g., "10 weeks"
-    tutorId: { type: Schema.Types.ObjectId, ref: "Tutor", required: true }, // Reference to the user
+    tutorId: { type: Schema.Types.ObjectId, ref: "User", required: true }, // Reference to the user
   },
   { timestamps: true }
 );
