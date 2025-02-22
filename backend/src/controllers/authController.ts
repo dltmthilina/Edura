@@ -4,8 +4,6 @@ import { validationResult } from "express-validator";
 import HttpError from "../models/httpError";
 import { toString } from "express-validator/lib/utils";
 import User from "../models/user";
-import { Student } from "../models/student";
-import { Tutor } from "../models/tutor";
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -20,29 +18,18 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const { firstName, lastName, email, studentId, password, role } = req.body;
+    const { firstName, lastName, email, password, roles } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       firstName,
       lastName,
       email,
       password: hashedPassword,
-      role,
+      roles,
     });
 
-    if (role == "student") {
-      await Student.create({
-        userId: user._id,
-        studentId,
-      });
-    } else if (role == "tutor") {
-      await Tutor.create({
-        userId: user._id,
-      });
-    }
-
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user._id, roles: user.roles },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -63,7 +50,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       next(new HttpError("Invalid credentials", 401));
     }
     const token = jwt.sign(
-      { userId: user?._id, role: user?.role },
+      { userId: user?._id, role: user?.roles },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );

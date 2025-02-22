@@ -1,17 +1,19 @@
 import express, { Request, Response, NextFunction } from "express";
 import { Enrollment } from "../models/enrollment";
 import HttpError from "../models/httpError";
+import { AuthRequest } from "../utils/common-interfaces";
 
 const enrollStudent = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { studentId, courseId } = req.body;
+  const userId = req.user?.userId;
+  const { courseId } = req.body;
 
   try {
     const existingEnrollment = await Enrollment.findOne({
-      studentId,
+      userId,
       courseId,
     });
     if (existingEnrollment) {
@@ -20,7 +22,7 @@ const enrollStudent = async (
       );
     }
 
-    const enrollment = await Enrollment.create({ studentId, courseId });
+    const enrollment = await Enrollment.create({ userId, courseId });
     res.status(201).json(enrollment);
   } catch (error) {
     return next(new HttpError("Database error", 500));
@@ -28,14 +30,15 @@ const enrollStudent = async (
 };
 
 const unEnrollStudent = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { enrollmentId } = req.params;
+    const userId = req.user?.userId;
+    const { courseId } = req.body;
 
-    const enrollment = await Enrollment.findByIdAndDelete(enrollmentId);
+    const enrollment = await Enrollment.findOneAndDelete({ userId, courseId });
 
     if (!enrollment) {
       return next(new HttpError("Enrollment not found", 404));
@@ -48,21 +51,24 @@ const unEnrollStudent = async (
 };
 
 const updateEnrollmentStatus = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const { enrollmentId } = req.params;
-  const { status } = req.body;
+  const userId = req.user?.userId;
+  const { status, courseId } = req.body;
 
   try {
-    const enrollment = await Enrollment.findById(enrollmentId);
+    const enrollment = await Enrollment.findOneAndUpdate(
+      { userId, courseId },
+      { status }
+    );
 
     if (!enrollment) {
       return next(new HttpError("Enrollment not found", 404));
     }
 
-    if (!["Active", "Completed"].includes(status)) {
+    if (!["active", "completed"].includes(status)) {
       return next(new HttpError("Invalid status value", 400));
     }
 

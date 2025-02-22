@@ -14,31 +14,37 @@ router.post(
     check("duration").isString().not().isEmpty(),
   ],
   authenticate,
-  authorize(["admin"]),
+  authorize(["tutor"]),
   courseController.createCourse
 );
 router.put(
-  "/update",
+  "/update/:id",
   authenticate,
-  authorize(["admin"]),
+  authorize(["tutor"]),
   courseController.updateCourse
 );
 router.get(
-  "/get:adminId",
+  "/get/user/all",
   authenticate,
-  authorize(["admin"]),
-  courseController.getCoursesByAdminId
+  authorize(["tutor"]),
+  courseController.getCoursesByTutor
 );
 router.get(
-  "/get:id",
+  "/get/:id",
   authenticate,
-  authorize(["admin", "student"]),
+  authorize(["tutor", "student"]),
   courseController.getCourseById
 );
-router.delete(
-  "/delete:id",
+router.get(
+  "/all",
   authenticate,
-  authorize(["admin"]),
+  authorize(["tutor", "student"]),
+  courseController.getAllCourses
+);
+router.delete(
+  "/delete/:id",
+  authenticate,
+  authorize(["tutor"]),
   courseController.deleteCourse
 );
 
