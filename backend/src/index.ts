@@ -22,7 +22,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api", enrollRoute);
+app.use("/api/student", enrollRoute);
 app.use("/api/upload", () => {});
 
 app.use(

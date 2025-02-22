@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const enrollmentSchema = new mongoose.Schema(
   {
-    studentId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
+      ref: "User",
       required: true,
     },
     courseId: {
@@ -14,7 +14,7 @@ const enrollmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Active", "Completed", "Dropped"],
+      enum: ["active", "completed"],
       default: "Active",
     },
     enrolledAt: { type: Date, default: Date.now },
