@@ -5,13 +5,11 @@ import HttpError from "../models/httpError";
 
 interface DecodedToken extends JwtPayload {
   userId: string;
-  role: string;
+  roles: string[];
 }
 
 const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(" ")[1]; // Expect "Bearer <token>"
-  console.log(req.headers.authorization?.split(" ")[1]);
-
   if (!token) {
     return next(
       new HttpError("Authentication failed. No token provided.", 401)
@@ -23,7 +21,7 @@ const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
       token,
       process.env.JWT_SECRET as string
     ) as DecodedToken;
-    req.user = { userId: decoded.userId, role: decoded.role }; // Store user data (e.g., id & role) in req.user
+    req.user = { userId: decoded.userId, roles: decoded.role }; // Store user data (e.g., id & role) in req.user
     next();
   } catch (error) {
     return next(new HttpError("Invalid or expired token", 403));

@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import studentController from "../../controllers/studentController";
+import studentController from "../../controllers/userController";
 import HttpError from "../../models/httpError";
 import { Student } from "../../models/student";
 
