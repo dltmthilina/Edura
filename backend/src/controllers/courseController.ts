@@ -70,7 +70,7 @@ const updateCourse = async (
 };
 
 /////////////////////////////////////////////////////////////////////////
-const getCoursesByAdminId = async (
+const getCoursesByTutor = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
@@ -145,14 +145,14 @@ const getAllCourses = async (
 
     res.status(200).json(courses);
   } catch (error) {
-    return next(new HttpError("Database error", 500));
+    return next(new HttpError(toString(error), 500));
   }
 };
 
 export default {
   createCourse,
   updateCourse,
-  getCoursesByAdminId,
+  getCoursesByTutor,
   deleteCourse,
   getCourseById,
   getAllCourses,

@@ -27,7 +27,7 @@ router.get(
   "/get/user/all",
   authenticate,
   authorize(["tutor"]),
-  courseController.getCoursesByAdminId
+  courseController.getCoursesByTutor
 );
 router.get(
   "/get/:id",
@@ -36,7 +36,7 @@ router.get(
   courseController.getCourseById
 );
 router.get(
-  "/get/all",
+  "/all",
   authenticate,
   authorize(["tutor", "student"]),
   courseController.getAllCourses
