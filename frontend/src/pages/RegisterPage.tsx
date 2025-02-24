@@ -3,6 +3,8 @@ import { Form, Input, Button, Card, Typography, message } from "antd";
 import { useAuth } from "../context/auth_context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AuthService from "../services/AuthService";
+import { User } from "../models/User";
 
 const { Title, Text } = Typography;
 
@@ -16,21 +18,23 @@ const RegisterPage = () => {
     lastName: string;
     email: string;
     password: string;
+    roles: string[];
   }) => {
     setLoading(true);
-    /* try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/register`,
-        values
-      );
-      login(response.data.token);
-      message.success("Registration successful!");
-      navigate("/dashboard");
+    const regData = new User(
+      values.firstName,
+      values.lastName,
+      values.email,
+      values.password,
+      values.roles
+    );
+    try {
+      await AuthService.register(regData);
     } catch (error) {
       message.error("Registration failed. Try again.");
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
