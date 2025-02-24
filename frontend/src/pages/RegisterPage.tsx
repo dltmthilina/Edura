@@ -7,6 +7,8 @@ import {
   Typography,
   message,
   notification,
+  Select,
+  Space,
 } from "antd";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +24,19 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const { setNotifi } = useNotifi();
   const [api] = notification.useNotification();
+
+  const items = [
+    {
+      value: "student",
+      label: "STUDENT",
+      desc: "STUDENT",
+    },
+    {
+      value: "tutor",
+      label: "TUTOR",
+      desc: "TUTOR",
+    },
+  ];
 
   const handleRegister = async (values: {
     firstName: string;
@@ -74,7 +89,25 @@ const RegisterPage = () => {
           <Text className="text-gray-500">Join Edura today!</Text>
         </div>
 
-        <Form layout="vertical" onFinish={handleRegister} className="space-y-4">
+        <Form layout="vertical" onFinish={handleRegister} className="space-y-1">
+          <Form.Item
+            label={<span className="font-medium text-gray-700">Role</span>}
+            name="roles"
+          >
+            <Select
+              mode="multiple"
+              style={{ width: "100%" }}
+              placeholder="select roles"
+              options={items}
+              optionRender={(option) => (
+                <Space>
+                  <span role="img" aria-label={option.data.label}>
+                    {option.data.label}
+                  </span>
+                </Space>
+              )}
+            />
+          </Form.Item>
           <Form.Item
             label={
               <span className="font-medium text-gray-700">First Name</span>
