@@ -25,7 +25,6 @@ interface DecodedToken {
 // Create Context with default values
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Function to check if token is valid
 const isTokenValid = (token: string | null): boolean => {
   if (!token) return false;
 
@@ -55,13 +54,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (token: string) => {
     try {
-      localStorage.setItems("authToken", token);
+      localStorage.setItem("authToken", token);
       const decoded: DecodedToken = jwtDecode(token);
-      localStorage.setItems(
+      localStorage.setItem(
         "userInfo",
         JSON.stringify({ userId: decoded.userId, role: decoded.role })
       );
-      localStorage.setItems("exp", decoded.exp);
+      localStorage.setItem("exp", decoded.exp.toString());
       setIsAuthenticated(true);
     } catch (error) {
       console.log(error);

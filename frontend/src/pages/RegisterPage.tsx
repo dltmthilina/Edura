@@ -1,8 +1,18 @@
 import { useState } from "react";
-import { Form, Input, Button, Card, Typography, message } from "antd";
-import { useAuth } from "../context/auth_context/AuthContext";
-import axios from "axios";
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Typography,
+  message,
+  notification,
+} from "antd";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import AuthService from "../services/AuthService";
+import { User } from "../models/User";
+import { useNotifi } from "../context/NotifyContext";
 
 const { Title, Text } = Typography;
 
@@ -10,27 +20,48 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { setNotifi } = useNotifi();
+  const [api] = notification.useNotification();
 
   const handleRegister = async (values: {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
+    roles: string[];
   }) => {
     setLoading(true);
-    /* try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/register`,
-        values
-      );
-      login(response.data.token);
-      message.success("Registration successful!");
-      navigate("/dashboard");
+    const regData = new User(
+      values.firstName,
+      values.lastName,
+      values.email,
+      values.password,
+      values.roles
+    );
+    try {
+      const response = await AuthService.register(regData);
+      if (response.status === 201) {
+        setNotifi({
+          message: response.data.message,
+          code: response.status,
+          type: "success",
+          isShow: true,
+        });
+        login(response.data.token);
+        navigate("/dashboard");
+      } else {
+        setNotifi({
+          message: response.data.message,
+          code: response.status,
+          type: "error",
+          isShow: true,
+        });
+      }
     } catch (error) {
       message.error("Registration failed. Try again.");
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
