@@ -7,7 +7,8 @@ class AuthService {
   async register(userData: User) {
     try {
       const response = await axios.post(`${BASE_URL}/auth/register`, userData);
-      return response.data;
+     
+      return response;
     } catch (error: any) {
       throw new Error(error.message || "Registration failed");
     }

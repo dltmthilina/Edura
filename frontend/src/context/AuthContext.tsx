@@ -24,6 +24,7 @@ interface DecodedToken {
 
 // Create Context with default values
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 const isTokenValid = (token: string | null): boolean => {
   if (!token) return false;
 

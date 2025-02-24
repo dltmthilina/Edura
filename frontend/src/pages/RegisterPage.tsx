@@ -1,10 +1,18 @@
 import { useState } from "react";
-import { Form, Input, Button, Card, Typography, message } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Card,
+  Typography,
+  message,
+  notification,
+} from "antd";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../services/AuthService";
 import { User } from "../models/User";
+import { useNotifi } from "../context/NotifyContext";
 
 const { Title, Text } = Typography;
 
@@ -12,6 +20,8 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { setNotifi } = useNotifi();
+  const [api] = notification.useNotification();
 
   const handleRegister = async (values: {
     firstName: string;
@@ -29,7 +39,24 @@ const RegisterPage = () => {
       values.roles
     );
     try {
-      await AuthService.register(regData);
+      const response = await AuthService.register(regData);
+      if (response.status === 201) {
+        setNotifi({
+          message: response.data.message,
+          code: response.status,
+          type: "success",
+          isShow: true,
+        });
+        login(response.data.token);
+        navigate("/dashboard");
+      } else {
+        setNotifi({
+          message: response.data.message,
+          code: response.status,
+          type: "error",
+          isShow: true,
+        });
+      }
     } catch (error) {
       message.error("Registration failed. Try again.");
     } finally {
