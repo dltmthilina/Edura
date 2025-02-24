@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Form, Input, Button, Card, Typography, message } from "antd";
-import { useAuth } from "../context/auth_context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AuthService from "../services/AuthService";
 
 const { Title, Text } = Typography;
 
@@ -13,19 +14,17 @@ const LoginPage = () => {
 
   const handleLogin = async (values: { email: string; password: string }) => {
     setLoading(true);
-    /*   try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
-        values
-      );
-      login(response.data.token);
-      message.success("Login successful!");
-      navigate("/dashboard");
+    try {
+      const res = await AuthService.login(values);
+      if (res.status === 200) {
+        console.log(res.data.token);
+        login(res.data.token);
+      }
     } catch (error) {
       message.error("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (

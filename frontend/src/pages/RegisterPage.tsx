@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Input, Button, Card, Typography, message } from "antd";
-import { useAuth } from "../context/auth_context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../services/AuthService";

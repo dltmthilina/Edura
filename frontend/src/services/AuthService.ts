@@ -13,7 +13,14 @@ class AuthService {
     }
   }
 
-  async login() {}
+  async login(loginData: { email: string; password: string }) {
+    try {
+      const response = await axios.post(`${BASE_URL}/auth/login`, loginData);
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message || "Login failed");
+    }
+  }
 }
 
 export default new AuthService();
