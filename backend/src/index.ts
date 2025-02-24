@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-
+import cors from "cors";
 import authRoutes from "./routes/authRoute";
 import courseRoutes from "./routes/courseRoute";
 import userRoutes from "./routes/userRoute";
@@ -17,6 +17,14 @@ interface CustomError extends Error {
   code?: number; // Optional property for error code
 }
 
+const corsOption = {
+  origin: "http://localhost:5173",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOption));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
