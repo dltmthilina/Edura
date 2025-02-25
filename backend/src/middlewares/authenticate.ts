@@ -5,7 +5,7 @@ import HttpError from "../models/httpError";
 
 interface DecodedToken extends JwtPayload {
   userId: string;
-  roles: string[];
+  activeRole: string;
 }
 
 const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -21,8 +21,8 @@ const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
       token,
       process.env.JWT_SECRET as string
     ) as DecodedToken;
-    
-    req.user = { userId: decoded.userId, roles: decoded.roles }; // Store user data (e.g., id & role) in req.user
+
+    req.user = { userId: decoded.userId, activeRole: decoded.activeRole }; // Store user data (e.g., id & role) in req.user
     next();
   } catch (error) {
     return next(new HttpError("Invalid or expired token", 403));

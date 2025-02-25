@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import HttpError from "../models/httpError";
 import { toString } from "express-validator/lib/utils";
 import User from "../models/user";
+import { AuthRequest } from "../utils/common-interfaces";
 
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -104,6 +105,37 @@ const getAllTutors = async (
   }
 };
 
+export const updateUserRole = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.userId;
+    const { newRole } = req.body;
+
+    if (!["student", "tutor"].includes(newRole)) {
+      return next(new HttpError("Invalid role selection.", 400));
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return next(new HttpError("User not found.", 404));
+
+    if (!user.roles.includes(newRole)) {
+      return next(new HttpError("User does not have this role.", 403));
+    }
+
+    user.activeRole = newRole;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Role updated successfully.", activeRole: newRole });
+  } catch (error) {
+    return next(new HttpError(toString(error), 500));
+  }
+};
+
 export default {
   updateUser,
   getAllUsers,
@@ -111,4 +143,5 @@ export default {
   deleteUser,
   getAllStudents,
   getAllTutors,
+  updateUserRole,
 };
