@@ -5,12 +5,12 @@ import { AuthRequest } from "../utils/common-interfaces";
 const authorize = (allowedRoles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     // Extract user role from request (assuming `req.user` contains authenticated user details)
-    const userRoles = req.user?.roles;
-    function hasCommonElement() {
-      return allowedRoles.some((element) => userRoles?.includes(element));
+    const userRole = req.user?.activeRole;
+    function isAuthorize() {
+      return allowedRoles.some((element) => userRole === element);
     }
 
-    if (!userRoles || userRoles.length == 0 || !hasCommonElement()) {
+    if (!userRole || isAuthorize()) {
       return next(
         new HttpError("Access denied. Insufficient permissions.", 403)
       );

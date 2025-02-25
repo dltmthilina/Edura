@@ -10,6 +10,7 @@ const {
   deleteUser,
   getAllStudents,
   getAllTutors,
+  updateUserRole,
 } = userController;
 
 const router = express.Router();
@@ -35,5 +36,6 @@ router.get(
 router.delete("/delete/:uid", authenticate, authorize(["tutor"]), deleteUser);
 router.put("/update/:uid", authenticate, authorize(["tutor"]), updateUser);
 router.get("/all", authenticate, authorize(["tutor"]), getAllUsers);
+router.patch("/update/role", authenticate, updateUserRole);
 
 export default router;

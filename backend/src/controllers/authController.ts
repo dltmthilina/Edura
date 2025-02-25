@@ -20,16 +20,21 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { firstName, lastName, email, password, roles } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const assignedRoles = roles && roles.length > 0 ? roles : ["student"];
+    const activeRole = assignedRoles[0];
+
     const user = await User.create({
       firstName,
       lastName,
       email,
       password: hashedPassword,
-      roles,
+      roles: assignedRoles,
+      activeRole,
     });
 
     const token = jwt.sign(
-      { userId: user._id, roles: user.roles },
+      { userId: user._id, activeRole: user.activeRole },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -50,7 +55,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       next(new HttpError("Invalid credentials", 401));
     }
     const token = jwt.sign(
-      { userId: user?._id, role: user?.roles },
+      { userId: user?._id, activeRole: user?.activeRole },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
